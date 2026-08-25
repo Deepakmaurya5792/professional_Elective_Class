@@ -1,0 +1,13 @@
+Important HTTP Status Codes
+Code	Meaning	When to use
+200	OK	Request successful
+201	Created	New resource created
+204	No Content	Successful request but no response body
+400	Bad Request	Client sent invalid data
+401	Unauthorized	Authentication required/failed
+403	Forbidden	User doesn't have permission
+404	Not Found	Requested resource doesn't exist
+405	Method Not Allowed	HTTP method isn't supported
+500	Internal Server Error	Server-side error
+502	Bad Gateway	Server received invalid response from another server
+503	Service Unavailable	Server temporarily unavailable

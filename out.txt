@@ -1,0 +1,84 @@
+1. What is JavaScript?
+
+JavaScript (JS) is a high-level, interpreted programming language mainly used to make web pages interactive and dynamic.
+
+HTML → Structure
+CSS → Styling
+JavaScript → Behavior / Logic
+
+Example
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<h1 id="heading">Hello</h1>
+
+
+<button onclick="changeText()">Click Me</button>
+
+
+<script>
+function changeText() {
+    document.getElementById("heading").innerHTML = "Hello JavaScript!";
+}
+</script>
+
+
+</body>
+</html>
+
+When the button is clicked, JavaScript changes the text.
+
+2. Features of JavaScript
+Lightweight language
+Interpreted/JIT compiled
+Dynamically typed
+Object-oriented
+Event-driven
+Case-sensitive
+Supports functional programming
+Runs in browsers
+Can also run on servers using Node.js
+Supports asynchronous programming
+3. JavaScript vs Java
+JavaScript	Java
+Mainly used for web development	General-purpose programming
+Dynamically typed	Statically typed
+Runs in browser and Node.js	Runs using JVM
+.js	.java
+Lightweight	More heavyweight
+Prototype-based object model	Class-based object model
+
+Important: Java and JavaScript are two different programming languages.
+
+4. How to Add JavaScript to HTML
+
+There are three ways.
+
+A. Inline JavaScript
+<button onclick="alert('Hello')">Click</button>
+
+JavaScript is written directly inside an HTML attribute.
+
+B. Internal JavaScript
+<script>
+    console.log("Hello World");
+</script>
+
+Usually written inside <script>.
+
+C. External JavaScript
+
+HTML
+
+<script src="script.js"></script>
+
+script.js
+
+console.log("Hello World");
+
+External JavaScript is generally preferred for larger projects.
+
+5. Comments
+Single-line comment

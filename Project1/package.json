@@ -1,0 +1,13 @@
+{
+  "name": "project1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type":"common.js",
+  "scripts": {
+   "dev":"node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
