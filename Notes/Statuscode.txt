@@ -11,3 +11,24 @@ Code	Meaning	When to use
 500	Internal Server Error	Server-side error
 502	Bad Gateway	Server received invalid response from another server
 503	Service Unavailable	Server temporarily unavailable
+
+
+
+Revise the cookie parser code
+To revise the cookie parser code, we can create a simple function that takes a cookie string as input and returns an object containing the parsed cookies. Here's an example implementation in JavaScript:```javascript
+function parseCookies(cookieString) {
+    const cookies = {};
+    if (!cookieString) {
+        return cookies;
+    }
+    
+    const cookiePairs = cookieString.split(';');
+    for (const pair of cookiePairs) {
+        const [key, value] = pair.trim().split('=');
+        if (key && value) {
+            cookies[key] = decodeURIComponent(value);
+        }
+    }
+    
+    return cookies;
+}

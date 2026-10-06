@@ -91,21 +91,54 @@
 
 //POST METHOD  DATE-24AUG
 
-const http=require('http')
-const port=5000;
-const server=http.createServer((req,res)=>{
-   // res.end("hello");
-    if(req.url==='/' && req.method==="POST"){
-        let body=''
-        req.on('data',(chunk)=>{
-            body=body+chunk
-        })
-        req.on('end',()=>{
-            console.log("raw Data",body);
-            console.log("parsed Data",user)
-        })
+// const http=require('http')
+// const port=5000;
+// const server=http.createServer((req,res)=>{
+//    // res.end("hello");
+//     if(req.url==='/' && req.method==="POST"){
+//         let body=''
+//         req.on('data',(chunk)=>{
+//             body=body+chunk
+//         })
+//         req.on('end',()=>{
+//             console.log("raw Data",body);
+//             const user=JSON.parse(body)
+//             console.log("parsed Data",user)
+//         })
+//         res.end(JSON.stringify({
+//             message:"User Created Successfully",
+//             user:user
+//         }))
+//     }
+// })
+// server.listen(port,()=>{
+//     console.log("server is started");
+// })
+import http from 'http';
+const server = http.createServer((req, res) => {
+    if (req.url === '/users' && req.method === "POST") {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk;
+        });
+
+        req.on('end', () => {
+            console.log("Raw Data:", body);
+            const user = JSON.parse(body);
+            console.log("User:", user);
+            res.writeHead(200, {
+                'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({
+                message: "user created successfully",
+                user: user
+            }));
+        });
+    } else {
+        res.end("hello");
     }
-})
-server.listen(port,()=>{
-    console.log("'server is started");
-})
+});
+
+    server.listen(3000, () => {
+    console.log("Server running ................");
+});
