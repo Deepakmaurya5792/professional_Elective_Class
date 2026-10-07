@@ -1,6 +1,6 @@
 import User from "../models/usermodel.js";
 import bcrypt from "bcrypt";
-import generateToken from "../Utils/jwt.js";
+import {generateToken,generateRefreshToken} from "../Utils/jwt.js";
 const userlogin = async (req, res) => {
     try {
 
@@ -24,14 +24,16 @@ const userlogin = async (req, res) => {
         }
         
         const token = generateToken(user);
+        const token2=generateRefreshToken(existingUser,)
+
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             maxAge: 3600000 // 1 hour
         });
 
-        
         res.status(200).json({ message: "Login successful", token });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Login failed", error: error.message });
