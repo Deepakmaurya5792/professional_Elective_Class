@@ -24,7 +24,7 @@ const userlogin = async (req, res) => {
         }
         
         const token = generateToken(user);
-        const token2=generateRefreshToken(existingUser,)
+        const token2=generateRefreshToken(user);
 
         res.cookie("token", token, {
             httpOnly: true,

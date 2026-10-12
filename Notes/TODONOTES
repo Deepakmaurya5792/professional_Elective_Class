@@ -1,0 +1,270 @@
+
+import { useEffect, useState } from "react";
+import "./App.css";
+
+const API_URL = "http://localhost:5000/api/todos";
+
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch tasks from backend when page loads
+  useEffect(() => {
+    async function fetchTodos() {
+      try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch tasks");
+        }
+
+        const data = await response.json();
+        setTodos(data);
+      } catch (err) {
+        setError("Cannot connect to backend. Check your server.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTodos();
+  }, []);
+
+  // Add a task
+  async function addTodo(e) {
+    e.preventDefault();
+
+    if (!title.trim()) return;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Could not add task");
+      }
+
+      setTodos((prev) => [...prev, data]);
+      setTitle("");
+      setError("");
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  // Toggle task completion
+  async function toggleTodo(id) {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "PATCH",
+      });
+
+      const updatedTodo = await response.json();
+
+      if (!response.ok) {
+        throw new Error(updatedTodo.message);
+      }
+
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id ? updatedTodo : todo
+        )
+      );
+    } catch (err) {
+      setError(err.message || "Could not update task");
+    }
+  }
+
+  // Delete a task
+  async function deleteTodo(id) {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    } catch (err) {
+      setError(err.message || "Could not delete task");
+    }
+  }
+
+  const completedCount = todos.filter(
+    (todo) => todo.completed
+  ).length;
+
+  return (
+    <main className="app">
+      <section className="todo-card">
+        <div className="heading">
+          <span className="eyebrow">YOUR DAILY PLANNER</span>
+          <h1>My Tasks<span>.</span></h1>
+          <p>Small steps, big progress.</p>
+        </div>
+
+        <form onSubmit={addTodo} className="todo-form">
+          <input
+            type="text"
+            placeholder="What needs to get done?"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            aria-label="New task"
+          />
+          <button type="submit">Add +</button>
+        </form>
+
+        {error && <p className="error">{error}</p>}
+
+        <div className="task-summary">
+          <span>YOUR LIST</span>
+          <span>{completedCount}/{todos.length} completed</span>
+        </div>
+
+        {loading ? (
+          <p className="empty">Loading tasks...</p>
+        ) : todos.length === 0 ? (
+          <div className="empty">
+            <div className="empty-icon">✓</div>
+            <h3>Nothing on your list yet</h3>
+            <p>Add your first task above to get started.</p>
+          </div>
+        ) : (
+          <ul className="todo-list">
+            {todos.map((todo) => (
+              <li
+                key={todo.id}
+                className={todo.completed ? "completed" : ""}
+              >
+                <button
+                  className="check"
+                  onClick={() => toggleTodo(todo.id)}
+                  aria-label="Toggle completion"
+                >
+                  {todo.completed ? "✓" : ""}
+                </button>
+
+                <span className="task-title">{todo.title}</span>
+
+                <button
+                  className="delete"
+                  onClick={() => deleteTodo(todo.id)}
+                  aria-label={`Delete ${todo.title}`}
+                  title="Delete task"
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <footer>
+          Built with React + Node.js
+        </footer>
+      </section>
+    </main>
+  );
+}
+
+export default App;
+
+
+
+
+
+BAckend
+
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+const PORT = 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Temporary storage
+let todos = [];
+let nextId = 1;
+
+// GET: Fetch all tasks
+app.get("/api/todos", (req, res) => {
+  res.json(todos);
+});
+
+// POST: Add a new task
+app.post("/api/todos", (req, res) => {
+  const { title } = req.body;
+
+  if (!title || !title.trim()) {
+    return res.status(400).json({
+      message: "Task title is required",
+    });
+  }
+
+  const newTodo = {
+    id: nextId++,
+    title: title.trim(),
+    completed: false,
+  };
+
+  todos.push(newTodo);
+
+  res.status(201).json(newTodo);
+});
+
+// PATCH: Mark task as completed or incomplete
+app.patch("/api/todos/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const todo = todos.find((item) => item.id === id);
+
+  if (!todo) {
+    return res.status(404).json({
+      message: "Task not found",
+    });
+  }
+
+  todo.completed = !todo.completed;
+
+  res.json(todo);
+});
+
+// DELETE: Remove a task
+app.delete("/api/todos/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const existingTodo = todos.find((item) => item.id === id);
+
+  if (!existingTodo) {
+    return res.status(404).json({
+      message: "Task not found",
+    });
+  }
+
+  todos = todos.filter((item) => item.id !== id);
+
+  res.json({
+    message: "Task deleted successfully",
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Backend running at http://localhost:${PORT}`);
+});

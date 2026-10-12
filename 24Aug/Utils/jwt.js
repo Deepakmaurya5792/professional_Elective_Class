@@ -27,5 +27,4 @@ const generateRefreshToken = (user) => {
         }
     );
 };
-export default {generateToken,generateRefreshToken};
-
+export {generateToken, generateRefreshToken};

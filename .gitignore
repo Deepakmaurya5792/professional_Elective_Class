@@ -1,0 +1,16 @@
+
+# Ignore node_modules in every folder
+**/node_modules/
+
+# Ignore package.json in every folder (only if you really want this)
+**/package.json
+
+# Ignore package-lock.json in every folder
+**/package-lock.json
+
+# Ignore environment variables
+**/.env
+
+# Ignore build folders
+**/dist/
+**/build/
