@@ -64,7 +64,7 @@ app.delete("/todos/:id", async(req, res) => {
         });
     }
 
-    t = t.filter((t) => t.id !== todoId);
+  const t = t.filter((t) => t.id !== todoId);
 
     res.json({
         message: "Todo deleted successfully"
