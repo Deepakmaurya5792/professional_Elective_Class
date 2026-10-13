@@ -82,3 +82,101 @@ External JavaScript is generally preferred for larger projects.
 
 5. Comments
 Single-line comment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const express = require("express");
+const cors = require("cors");
+const connectdb = require("./Db/db");
+const Todo = require("./models/Todo");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Homepage
+app.get("/", (req, res) => {
+    res.send("Homepage");
+});
+
+// Get all todos
+app.get("/todos", async (req, res) => {
+    try {
+        const todos = await Todo.find().sort({ createdAt: -1 });
+        res.json(todos);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Create a todo
+app.post("/todos", async (req, res) => {
+    try {
+        const { title } = req.body;
+
+        if (typeof title !== "string" || !title.trim()) {
+            return res.status(400).json({
+                message: "Todo title is required"
+            });
+        }
+
+        const todo = await Todo.create({
+            title: title.trim()
+        });
+
+        res.status(201).json(todo);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Delete a todo
+app.delete("/todos/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+            return res.status(400).json({
+                message: "Invalid todo ID"
+            });
+        }
+
+        const todo = await Todo.findByIdAndDelete(id);
+
+        if (!todo) {
+            return res.status(404).json({
+                message: "Todo not found"
+            });
+        }
+
+        res.json({
+            message: "Todo deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Start server only after MongoDB connects
+const startServer = async () => {
+    await connectdb();
+
+    app.listen(5000, () => {
+        console.log("Server running at http://localhost:5000");
+    });
+};
+
+startServer();
