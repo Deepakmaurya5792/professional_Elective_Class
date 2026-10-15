@@ -49,10 +49,7 @@ function App() {
                 value={title}
                 onChange={(e) => settitle(e.target.value)}
             />
-            <input type="text"
-            placeholder="enter the name"
-            value={name}
-            onChange={(e)=>setname(e.target.value)} />
+            
             <button onClick={addtodo}>Submit</button>
             <ul>
                 {todo.map((t) => (
